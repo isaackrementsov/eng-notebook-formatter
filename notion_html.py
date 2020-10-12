@@ -6,7 +6,8 @@ html_tags = {
     'text': 'p',
     'divider': 'hr',
     'bulleted_list': 'ul',
-    'bookmark': 'a'
+    'bookmark': 'a',
+    'image': 'img'
 }
 
 # Class to generate engineering notebook HTML
@@ -69,16 +70,25 @@ class HTMLGenerator:
             id_formatted = ''.join(card.id.split('-'))
             card_page = self.client.get_block('https://www.notion.so/' + card.title + '-' + id_formatted)
 
-            card_html = '<div class="card"><h1>' + card.title + '</h1>'
+            # HTML added by card content
             additional_html = ''
-
-            i = 0
+            # Add each block to the additional HTML
             for block in card_page.children:
-                i += 1
                 additional_html += self.convert_to_html(block)
 
+            # Don't display card if its body is empty
             if additional_html != '':
-                card_html += additional_html + '</div>'
-                html += card_html
+                # Add the whole card to the HTML document
+                html += '<div class="card"><h1>' + card.title + '</h1>'
+
+                # Add users in HTML links
+                html += '<div class="users">'
+
+                for user in card.assign:
+                    html += '<a href="mailto:' + user.email + '">' + user.full_name + '</a>'
+
+                html += "</div>"
+
+                html += additional_html + '</div>'
 
         return html

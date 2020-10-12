@@ -33,3 +33,21 @@ h2 {
 h3 {
     font-size: 20px;
 }
+
+.users {
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+}
+
+.users a {
+    display: inline;
+    padding: 5px 10px;
+    width: auto;
+    background-color: #FFCDD2;
+    color: black;
+    margin: 5px 0;
+    margin-right: 8px;
+    border-radius: 10px;
+    font-size: 15px;
+}
