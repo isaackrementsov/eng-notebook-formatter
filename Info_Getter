@@ -1,0 +1,98 @@
+import json
+from notion.client import NotionClient
+from flask import Flask, render_template, request
+
+import notion_html
+
+# Initialize Flask app
+app = Flask(__name__)
+
+credentials = json.load(open('credentials.json', 'r'))
+
+# Use token_v2 from Notion cookies while logged in to access API
+client = NotionClient(token_v2=credentials['token'])
+html_generator = notion_html.HTMLGenerator(client)
+
+# Return notion output via Flask route
+@app.route('/')
+def get_notion_output():
+    with app.app_context():
+        html = html_generator.get_sprint_html()
+        return render_template('index.html', html=html)
+html_deeta = []
+html_deeta = get_notion_output()
+
+
+
+leength = len(html_deeta)
+
+goal = 0
+date = 0
+global goal_confirmed
+global date_confirmed
+goal_confirmed = 0
+date_confirmed = 0
+date_initial = 0
+goal_data = []
+dates_data = []
+for i in range (0, (leength - 1)):
+    if (goal_confirmed == 1 ):
+        goal_data.append(html_deeta[i])
+        if (html_deeta[i] == "."):
+            goal_confirmed = 0
+    if (goal_confirmed == 1 and html_deeta[i] == "."):
+        goal_confirmed = 0
+        print("haha im doing things")
+    if (html_deeta[i] == "G" and goal_confirmed == 0):
+        goal = 1
+    if (html_deeta[i] == "o" and goal == 1 and goal_confirmed == 0):
+        goal = 2
+    if (html_deeta[i] == "a" and goal == 2 and goal_confirmed == 0):
+        goal = 3
+    if (html_deeta[i] == "l" and goal == 3 and goal_confirmed == 0):
+        goal_confirmed = 1
+        goal = 0
+    if (date_confirmed == 1 and date_initial == 1):
+        date_initial = 0
+    if (date_confirmed == 1 and date_initial == 0 and html_deeta[i] != "<"):
+        dates_data.append(html_deeta[i])
+    if (date_confirmed == 1 and date_initial == 0 and html_deeta[i] == "<"):
+        date_confirmed = 0
+    if (date_confirmed == 1 and html_deeta[i] == " "):
+        date_confrimed = 0
+    if (html_deeta[i] == "<" and date_initial == 0 and date_confirmed == 0):
+        if(html_deeta[i + 1] == "h"):
+            date_confirmed = 1
+            date_initial = 1
+    reel_data = []
+    for i in range (len(dates_data)):
+        if(dates_data[i] == "1"):
+            reel_data.append(dates_data[i])
+        if(dates_data[i] == "2"):
+            reel_data.append(dates_data[i])
+        if(dates_data[i] == "3"):
+            reel_data.append(dates_data[i])
+        if(dates_data[i] == "4"):
+            reel_data.append(dates_data[i])
+        if(dates_data[i] == "5"):
+            reel_data.append(dates_data[i])
+        if(dates_data[i] == "6"):
+            reel_data.append(dates_data[i])
+        if(dates_data[i] == "7"):
+            reel_data.append(dates_data[i])
+        if(dates_data[i] == "8"):
+            reel_data.append(dates_data[i])
+        if(dates_data[i] == "9"):
+            reel_data.append(dates_data[i])
+        if(dates_data[i] == "10"):
+            reel_data.append(dates_data[i])
+        if(dates_data[i] == "0"):
+            reel_data.append(dates_data[i])
+        if(dates_data[i] == "/"):
+            reel_data.append(dates_data[i])
+        
+
+print(goal_data)
+print(reel_data)
+
+        
