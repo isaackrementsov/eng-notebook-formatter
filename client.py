@@ -29,8 +29,36 @@ class Client(NotionClient):
 class Card:
 
     def __init__(self, props, content):
+        # Card properties
         self.props = props
-        self.blocks = content.children
+
+        # Blocks in the goal section
+        self.goal = []
+        # Engineering notebook entries
+        self.entries = []
+        # Section counter
+        j = -1
+        # Divider index for reference within sections
+        div_index = 0
+
+        blocks = content.children
+        last = len(blocks) - 1
+
+        for i in range(len(blocks)):
+            block = blocks[i]
+            type = block.type
+            print(type)
+            if type == 'divider' and i != last:
+                divider_index = i
+                j += 1
+            else:
+                if j == -1:
+                    self.goal.append(block)
+                else:
+                    if i - divider_index == 1:
+                        self.entries.append([block])
+                    else:
+                        self.entries[j].append(block)
 
     def get_block_url(props):
         # Get the properly formatted row id
