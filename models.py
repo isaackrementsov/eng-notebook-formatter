@@ -1,10 +1,20 @@
+from sqlalchemy import Column, Integer, String, NestedMutableJSON, ARRAY, ForeignKey
+from sqlalchemy.orm import relationship, backref
+from sqlalchemy.ext.declarative import declarative_base
+
+# SQLAlchemy base model
+Base = declarative_base()
 
 # Class to store card body and properties
-class Card:
+class Card(Base):
 
     __tablename__ = 'card'
 
-    name =
+    id = Column(Integer, primary_key=True)
+    title = Column(String)
+    type = Column(ARRAY(String))
+    assign = Column(ARRAY(String))
+    goal = Column(NestedMutableJSON)
 
     def initialize(self, props, content):
         # Card properties
@@ -47,7 +57,15 @@ class Card:
 
 
 # Class to contain engineering notebook entries
-class Entry:
+class Entry(Base):
+
+    timeframe = Column(NestedMutableJSON)
+    columns = Column(ARRAY(String))
+    progress = Column(NestedMutableJSON)
+    takeaways = Column(NestedMutableJSON)
+    plans = Column(NestedMutableJSON)
+
+    card_id = ForeignKey()
 
     def __init__(self, date_block):
         self.blocks = []
