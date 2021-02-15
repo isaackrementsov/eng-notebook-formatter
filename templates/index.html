@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Notion Test</title>
-        <link type="text/css" rel="stylesheet" href="/static/css/lib/bootstrap.min.css"/>
-        <link type="text/css" rel="stylesheet" href="/static/css/main.css"/>
+        <title>Engineering Notebook</title>
+        <link rel="stylesheet" type="text/css" href="/static/css/lib/bootstrap.min.css"/>
+        <link rel="stylesheet" type="text/css" href="/static/css/main.css"/>
     </head>
     <body>
         <div class="jumbotron text-center">
@@ -11,7 +11,42 @@
         </div>
         <div class="row">
             <div class="col-md-3"></div>
-            <div class="col-md-6">{{ html | safe }}</div>
+            <div class="col-md-6">
+                {% for card in cards %}
+                    <div class="card">
+                        <h1>{{card.title}}</h1>
+                        {% set colors = {'Mechanical': '#FFCDD2', 'Programming': '#FFF9C4', 'Electrical': '#FFE0B2', 'Public Relations': '#E1BEE7'} %}
+                        <div class="users type">
+                            {% for team in card.type %}
+                                <a style="background-color: {{colors[team]}}">{{team}}</a>
+                            {% endfor %}
+                        </div>
+                        <div class="users">
+                            {% for user in card.assign %}
+                                <a>{{user}}</a>
+                            {% endfor %}
+                        </div>
+                        {% for entry in card.entries %}
+                            {% set values = prettify(entry.timeframe['values']) %}
+                            <h2>
+                                {% if entry.timeframe.type == 'list' %}
+                                    {% for value in values %}
+                                        {{value}}{{', ' if value != values[-1] else ''}}
+                                    {% endfor %}
+                                {% else %}
+                                    {{values[0]}}–{{values[1]}}
+                                {% endif %}
+                            </h2>
+                            <h3>Progress</h3>
+                            <p>{{ entry.progress }}</p>
+                            <h3>Takeaways</h3>
+                            <p>{{ entry.takeaways }}</p>
+                            <h3>Plans</h3>
+                            <p>{{ entry.plans }}</p>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+            </div>
             <div class="col-md-3"></div>
         </div>
     </body>
