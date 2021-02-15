@@ -1,9 +1,17 @@
-from sqlalchemy import Column, Integer, String, NestedMutableJSON, ARRAY, ForeignKey
+from sqlalchemy import Column, Integer, String, ARRAY, ForeignKey
+#from sqlalchemy.types import PickleType
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy.ext.declarative import declarative_base
 
+from object_serialization import PickleType
+from connect import session
+
 # SQLAlchemy base model
 Base = declarative_base()
+
+def save(obj):
+    session.add(obj)
+    session.commit()
 
 # Class to store card body and properties
 class Card(Base):
@@ -12,16 +20,28 @@ class Card(Base):
 
     id = Column(Integer, primary_key=True)
     title = Column(String)
-    type = Column(ARRAY(String))
-    assign = Column(ARRAY(String))
-    goal = Column(NestedMutableJSON)
+    type = Column(PickleType)
+    assign = Column(PickleType)
+    goal = Column(PickleType)
+    entries = relationship('Entry', back_populates='card')
+
+    def __init__(self, row, content):
+        self.initialize(row, content)
 
     def initialize(self, props, content):
         # Card properties
+        self.title = props.title
+
+        self.assign = {'values': []}
+        for person in props.assign:
+            self.assign.get('values').append(person.full_name)
+
+        # TODO: convert all cards from type -> teams
+        self.type = {'values': props.teams}
         self.props = props
 
         # Blocks in the goal section
-        self.goal = []
+        self.goal = {'values': []}
         # Engineering notebook entries
         self.entries = []
         # Section counter
@@ -41,7 +61,8 @@ class Card(Base):
                 j += 1
             else:
                 if j == -1:
-                    self.goal.append(block)
+                    pass
+                    #self.goal.get('values').append(block)
                 else:
                     if i - divider_index == 1:
                         entry = Entry(block)
@@ -55,20 +76,30 @@ class Card(Base):
         # URL to find that row as a page
         return 'https://www.notion.so/' + props.title + '-' + id
 
-
 # Class to contain engineering notebook entries
 class Entry(Base):
 
-    timeframe = Column(NestedMutableJSON)
-    columns = Column(ARRAY(String))
-    progress = Column(NestedMutableJSON)
-    takeaways = Column(NestedMutableJSON)
-    plans = Column(NestedMutableJSON)
+    __tablename__ = 'entry';
 
-    card_id = ForeignKey()
+    id = Column(Integer, primary_key=True)
 
-    def __init__(self, date_block):
+    timeframe = Column(PickleType)
+    columns = Column(PickleType)
+    progress = Column(PickleType)
+    takeaways = Column(PickleType)
+    plans = Column(PickleType)
+
+    card_id = Column(Integer, ForeignKey('card.id'))
+    card = relationship('Card', back_populates='entries')
+
+    def __init__(self, date_block,):
         self.blocks = []
+
+        self.timeframe = {'type': 'range', 'values': [320230303, 230230230]}
+        self.columns = {'values': []}
+        self.progress = ''
+        self.takeaways = ''
+        self.plans = ''
 
     def incorporate(self, block):
         self.blocks.append(block)
