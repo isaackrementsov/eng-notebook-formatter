@@ -1,0 +1,97 @@
+body {
+    background: linear-gradient(115deg, #FF5252, #D50000);
+    box-shadow: 0 0px 8px 0 rgba(0,0,0,0.2);
+    overflow-x: hidden;
+}
+
+.jumbotron {
+    background-color: transparent;
+    padding-top: 40px;
+    padding-bottom: 10px;
+    color:  white;
+}
+.jumbotron h1 {
+    font-size: 35px;
+    font-weight: bold;
+}
+.jumbotron h2 {
+    padding: 0;
+    margin: 0;
+}
+
+.card {
+    background-color: whitesmoke;
+    margin: 10px;
+    padding: 25px 40px;
+    border-style: hidden;
+}
+
+.card h1 {
+    font-size: 25px;
+    font-weight: normal;
+    margin: 7px 0 10px 0;
+    margin-bottom: 0;
+}
+.card h2 {
+    font-size: 23px;
+    margin: 0 0 15px 0;
+}
+.card h3 {
+    font-size: 18px;
+}
+
+.users {
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+}
+
+.users a {
+    display: inline;
+    padding: 5px 10px;
+    width: auto;
+    background-color: #dbdbdb;
+    color: black;
+    margin: 5px 0;
+    margin-right: 8px;
+    border-radius: 10px;
+    font-size: 15px;
+}
+
+.columns {
+    font-style: italic;
+}
+
+.new-goals {
+    border: 1px solid #FF5252;
+}
+
+.new-goals h1 {
+    color: #FF5252;
+    font-weight: bold;
+    font-size: 30px;
+}
+
+.new-goals p {
+    font-size: 18px;
+}
+
+.variable-width {
+    width: 50px !important;
+}
+
+.central-col .card {
+    margin: 15px 300px;
+}
+
+a.web-boomark {
+    background-size: cover;
+    background-position: center;
+    background-color: rgba(255,255,255,0.5);
+}
+
+@media print {
+    .central-col.card {
+        margin: 25px 0;
+    }
+}

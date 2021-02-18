@@ -27,6 +27,7 @@
                             {% endfor %}
                         </div>
                         {% for entry in card.entries %}
+                            Sprint {{entry.sprint}}
                             {% set values = prettify(entry.timeframe['values']) %}
                             <h2>
                                 {% if entry.timeframe.type == 'list' %}
@@ -37,12 +38,17 @@
                                     {{values[0]}}–{{values[1]}}
                                 {% endif %}
                             </h2>
-                            <h3>Progress</h3>
-                            <p>{{ entry.progress }}</p>
-                            <h3>Takeaways</h3>
-                            <p>{{ entry.takeaways }}</p>
-                            <h3>Plans</h3>
-                            <p>{{ entry.plans }}</p>
+
+                            {% if entry.progress|length > 0 %}
+                                <h3>Progress</h3>
+                            {% endif %}
+                            {% if entry.takeaways|length > 0 %}
+                                <h3>Takeaways</h3>
+                            {% endif %}
+                            {% if entry.plans|length > 0 %}
+                                <h3>Plans</h3>
+                            {% endif %}
+
                         {% endfor %}
                     </div>
                 {% endfor %}

@@ -8,6 +8,7 @@ CREATE TABLE card (
 );
 CREATE TABLE entry (
     id INT NOT NULL AUTO_INCREMENT,
+    sprint INT,
     timeframe BLOB,
     columns BLOB,
     progress BLOB,

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Engineering Notebook</title>
+        <link rel="stylesheet" type="text/css" href="/static/css/lib/bootstrap.min.css"/>
+        <link rel="stylesheet" type="text/css" href="/static/css/main.css"/>
+    </head>
+    <body>
+
+        {% for sprint in range(1,5) %}
+            <div class="jumbotron text-center">
+                <h1>Sprint {{sprint}}</h1>
+            </div>
+            <div class="row">
+                <div class="central-col col-md-12">
+                    <div class="card new-goals">
+                        <h1>New Goals</h1>
+                        {% for card in sprint_goals[sprint - 1] %}
+                            <hr>
+                            <h2>{{card.title}}</h2>
+                            {% set colors = {'Mechanical': '#FFCDD2', 'Programming': '#FFF9C4', 'Electrical': '#FFE0B2', 'Public Relations': '#E1BEE7'} %}
+                            <div class="users type">
+                                {% for team in card.type %}
+                                    <a style="background-color: {{colors[team]}}">{{team}}</a>
+                                {% endfor %}
+                            </div>
+                            <div class="users">
+                                {% for user in card.assign %}
+                                    <a>{{user}}</a>
+                                {% endfor %}
+                            </div>
+                            {% for block in card.goal %}
+                                {{block_to_html(block)|safe}}
+                            {% endfor %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="jumbotron text-center">
+                <h2>Notebook Entries</h2>
+            </div>
+            <div class="row">
+                <div class="central-col col-md-12">
+                    {% for date in dates %}
+                        {% set entries = entry_map[date] %}
+
+                        {% if entries[0].sprint == sprint %}
+                            <div class="card">
+                                <h1>{{date.replace('_', '/')}}</h1>
+
+                                {% for entry in entries %}
+                                    <hr>
+                                    <h2>{{entry.card.title}}</h2>
+                                    <div class="columns">
+                                        {% for column in entry.columns %}
+                                            {{column}}
+                                            {% if column != entry.columns[-1] %}{{'→'}}{% endif %}
+                                        {% endfor %}
+                                    </div>
+                                    <div class="users">
+                                        {% for user in entry.card.assign %}
+                                            <a>{{user}}</a>
+                                        {% endfor %}
+                                    </div>
+                                    {% for section in ['progress', 'takeaways', 'plans'] %}
+                                        {% set blocks = entry[section] %}
+
+                                        {% if blocks and blocks|length > 0 %}
+                                            <h3>{{section.title()}}</h3>
+                                            {% for block in blocks %}
+                                                {{block_to_html(block)|safe}}
+                                            {% endfor %}
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        {% endfor %}
+    </body>
+</html>
