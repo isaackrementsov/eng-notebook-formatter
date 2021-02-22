@@ -98,7 +98,7 @@ class Card(Base):
                 j += 1
             else:
                 if j == -1 and initial_entries == 0:
-                    if block.type != 'sub_header':
+                    if type != 'sub_header':
                         self.goal.append(block)
                 elif j > -1:
                     if i - divider_index == 1:
@@ -198,7 +198,7 @@ class Entry(Base):
             if date < sprint_end_date:
                 return i + 1
 
-        return len(self.sprint_dates)
+        return i + 2
 
     def format_timeframe(self, date_string):
         # Could be __date__, date1-date2, date1,date2
@@ -247,11 +247,11 @@ class Entry(Base):
 
             if label:
                 self.section = label
-            elif self.section != '':
-                current_section = getattr(self, self.section)
-                current_section.append(block)
+        elif self.section != '':
+            current_section = getattr(self, self.section)
+            current_section.append(block)
 
-                setattr(self, self.section, current_section)
+            setattr(self, self.section, current_section)
 
         self.has_columns = True
 

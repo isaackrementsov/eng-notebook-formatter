@@ -4,7 +4,7 @@ from client import Client
 from database.models import Card, save
 
 credentials = json.load(open('credentials.json', 'r'))
-Client(token_v2=credentials['token'])
+Client(token_v2=credentials['token_v2'])
 
 # Sprint 2: https://www.notion.so/dc442ead4ce24653b3fbbec56c9da987?v=7ee74fbb66e64423becf2885396e6987
 # Sprint 3: https://www.notion.so/0d616b287ebf4a10bff7b49f022a9c1a?v=322ad6c60e124d8b88ba2ad1a03d18a8
@@ -23,4 +23,5 @@ for link in LINKS:
 
     for card in cards:
         if card.valid:
-            save(card)
+            #save(card)
+            pass

@@ -4,11 +4,13 @@
         <title>Engineering Notebook</title>
         <link rel="stylesheet" type="text/css" href="/static/css/lib/bootstrap.min.css"/>
         <link rel="stylesheet" type="text/css" href="/static/css/main.css"/>
+        <link rel="stylesheet" href="/static/css/lib/default.min.css">
+        <script src="/static/js/lib/highlight.min.js"></script>
     </head>
     <body>
 
         {% for sprint in range(1,5) %}
-            <div class="jumbotron text-center">
+            <div class="jumbotron text-center first">
                 <h1>Sprint {{sprint}}</h1>
             </div>
             <div class="row">
@@ -79,5 +81,8 @@
                 </div>
             </div>
         {% endfor %}
+        <script>
+            document.querySelectorAll('pre code').forEach(block => hljs.highlightBlock(block))
+        </script>
     </body>
 </html>

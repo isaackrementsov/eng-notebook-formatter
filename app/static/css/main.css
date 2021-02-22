@@ -4,10 +4,14 @@ body {
     overflow-x: hidden;
 }
 
+.jumbotron.first {
+    padding-top: 40px;
+}
+
 .jumbotron {
     background-color: transparent;
-    padding-top: 40px;
-    padding-bottom: 10px;
+    padding: 20px 0;
+    margin: 0;
     color:  white;
 }
 .jumbotron h1 {
@@ -21,9 +25,9 @@ body {
 
 .card {
     background-color: whitesmoke;
-    margin: 10px;
     padding: 25px 40px;
     border-style: hidden;
+    margin: 25px 20vw;
 }
 
 .card h1 {
@@ -37,7 +41,9 @@ body {
     margin: 0 0 15px 0;
 }
 .card h3 {
+    margin: 10px 0;
     font-size: 18px;
+    font-weight: bold;
 }
 
 .users {
@@ -76,22 +82,64 @@ body {
     font-size: 18px;
 }
 
-.variable-width {
-    width: 50px !important;
-}
-
-.central-col .card {
-    margin: 15px 300px;
-}
-
-a.web-boomark {
+a.web-bookmark {
+    position: relative;
     background-size: cover;
     background-position: center;
     background-color: rgba(255,255,255,0.5);
+    padding: 0;
+    border-radius: 4px;
+    box-sizing: border-box;
+    color: white;
+}
+
+a.web-bookmark p {
+    display: inline-block;
+    background: linear-gradient(rgba(100,100,100,0.8), rgba(100,100,100,0.2));
+    padding: 10px 20px;
+    border-radius: 4px;
+    margin: 0;
+}
+
+a.web-bookmark span {
+    display: block;
+}
+
+a.web-bookmark .bookmark-title {
+    color: #80D8FF;
+    font-weight: bold;
+}
+
+a.web-bookmark .bookmark-description {
+    max-width: 600px;
+}
+
+li.list-elem {
+    margin: 2px 0 2px 20px;
+    font-family: inherit;
+    font-size: 18px;
+    color: #575757;
 }
 
 @media print {
     .central-col.card {
-        margin: 25px 0;
+        margin: 1vw 0;
     }
+}
+
+code:not(.inline-snippet) {
+    padding: 30px !important;
+    border-radius: 5px;
+}
+
+code.inline-snippet {
+    background-color: #e6e6e6;
+    padding: 5px;
+    border-radius: 3px;
+}
+
+.card img {
+    max-width: 70%;
+    margin: 10px;
+    border-radius: 5px;
 }
