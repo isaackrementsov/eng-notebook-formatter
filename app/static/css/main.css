@@ -91,6 +91,7 @@ a.web-bookmark {
     border-radius: 4px;
     box-sizing: border-box;
     color: white;
+    margin: 10px 0;
 }
 
 a.web-bookmark p {
@@ -117,7 +118,7 @@ a.web-bookmark .bookmark-description {
 li.list-elem {
     margin: 2px 0 2px 20px;
     font-family: inherit;
-    font-size: 18px;
+    font-size: 16px;
     color: #575757;
 }
 
@@ -138,8 +139,8 @@ code.inline-snippet {
     border-radius: 3px;
 }
 
-.card img {
+.card img, .card video, .card iframe {
     max-width: 70%;
-    margin: 10px;
+    margin: 10px 0;
     border-radius: 5px;
 }

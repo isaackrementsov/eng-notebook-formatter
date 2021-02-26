@@ -92,7 +92,7 @@ class Card(Base):
         for i in range(len(blocks)):
             block = blocks[i]
             type = block.type
-
+            
             if type == 'divider' and i != last:
                 divider_index = i
                 j += 1
@@ -242,16 +242,15 @@ class Entry(Base):
                 if column.lower() in title:
                     self.columns.append(column)
 
+        label = None
         if block.type == 'text':
             label = entryTypes.get_label(block.title)
 
             if label:
                 self.section = label
-        elif self.section != '':
-            current_section = getattr(self, self.section)
-            current_section.append(block)
 
-            setattr(self, self.section, current_section)
+        if self.section != '' and self.section != label:
+            getattr(self, self.section).append(block)
 
         self.has_columns = True
 

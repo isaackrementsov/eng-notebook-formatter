@@ -23,5 +23,4 @@ for link in LINKS:
 
     for card in cards:
         if card.valid:
-            #save(card)
-            pass
+            save(card)
