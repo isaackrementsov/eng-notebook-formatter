@@ -5,11 +5,26 @@
         <link rel="stylesheet" type="text/css" href="/static/css/lib/bootstrap.min.css"/>
         <link rel="stylesheet" type="text/css" href="/static/css/main.css"/>
         <link rel="stylesheet" href="/static/css/lib/default.min.css">
+        <script>
+            MathJax = {
+                tex: {
+                    inlineMath: [['\\(', '\\)']]
+                },
+                svg: {
+                    fontCache: 'global'
+                }
+            }
+        </script>
+        <script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
         <script src="/static/js/lib/highlight.min.js"></script>
     </head>
     <body>
 
         {% for sprint in range(1,5) %}
+            {% if sprint != 1 %}
+                <span class="sprint-header"></span>
+            {% endif %}
+
             <div class="jumbotron text-center first">
                 <h1>Sprint {{sprint}}</h1>
             </div>
@@ -38,6 +53,7 @@
                     </div>
                 </div>
             </div>
+            <span class="notebook-entries"></span>
             <div class="jumbotron text-center">
                 <h2>Notebook Entries</h2>
             </div>

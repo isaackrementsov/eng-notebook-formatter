@@ -92,7 +92,7 @@ class Card(Base):
         for i in range(len(blocks)):
             block = blocks[i]
             type = block.type
-            
+
             if type == 'divider' and i != last:
                 divider_index = i
                 j += 1
@@ -105,6 +105,9 @@ class Card(Base):
                         entry = Entry(block)
                         self.entries.append(entry)
                     else:
+                        if hasattr(block, 'title') and self.title == 'Odometry Math/Code':
+                            props = block.get()['properties']
+
                         self.entries[j + initial_entries].incorporate(block)
 
     def get_block_url(props):
