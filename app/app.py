@@ -240,10 +240,21 @@ def generate_page():
     return render_template(
         'main_notebook.html',
         entry_map=entry_map,
+        important_cards=important_cards,
         dates=dates,
         sprint_goals=sprint_goals,
         block_to_html=block_to_html,
         prettify=prettify
+    )
+
+@app.route('/generate_supp', methods=['GET'])
+def generate_supp():
+    important_cards = Card.get_important()
+
+    return render_template(
+        'supplemental_notebook.html',
+        important_cards=important_cards,
+        block_to_html=block_to_html
     )
 
 @app.route('/saved', methods=['GET'])

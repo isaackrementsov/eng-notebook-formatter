@@ -1,7 +1,7 @@
 import datetime
 import re
 
-from sqlalchemy import Column, Integer, String, ARRAY, ForeignKey
+from sqlalchemy import Column, Integer, String, ARRAY, ForeignKey, Boolean
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -27,6 +27,7 @@ class Card(Base):
 
     id = Column(Integer, primary_key=True)
     title = Column(String)
+    important = Column(Boolean)
 
     type = Column(PickleType)
     assign = Column(PickleType)
@@ -48,6 +49,10 @@ class Card(Base):
         self.goal = []
         # Engineering notebook entries
         self.entries = []
+        # Whether the card should be shown in the bottom section
+        self.important = False
+        if hasattr(props, 'separate_notebook'):
+            self.important = props.separate_notebook == 'yes'
 
         duplicate = Card.get_by_title(self.title)
 
@@ -135,6 +140,9 @@ class Card(Base):
 
     def get_all():
         return session.query(Card).all()
+
+    def get_important():
+        return session.query(Card).filter_by(important=True).all()
 
     def get_by_title(title):
         return session.query(Card).filter_by(title=title).first()

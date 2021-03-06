@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Engineering Notebook</title>
+        <link rel="stylesheet" type="text/css" href="/static/css/lib/bootstrap.min.css"/>
+        <link rel="stylesheet" type="text/css" href="/static/css/main.css"/>
+        <link rel="stylesheet" href="/static/css/lib/default.min.css">
+        <script>
+            MathJax = {
+                tex: {
+                    inlineMath: [['\\(', '\\)']]
+                },
+                svg: {
+                    fontCache: 'global'
+                }
+            }
+        </script>
+        <style>
+            .card h1.main {
+                font-weight: bold;
+            }
+
+            .card h1 {
+                margin: 20px 0px;
+                font-weight: 200;
+            }
+
+            .card h2 {
+                font-weight: normal;
+            }
+
+            .card h3 {
+                font-weight: bold;
+            }
+        </style>
+        <script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+        <script src="/static/js/lib/highlight.min.js"></script>
+    </head>
+    <body>
+        <div class="jumbotron text-center first">
+            <h1>Supplemental Notebook - Important Systems</h1>
+        </div>
+        {% for card in important_cards %}
+            <div class="row">
+                <div class="central-col col-md-12">
+                    <div class="card">
+                        <h1 class="main">{{card.title}}</h1>
+                        <div class="users type">
+                            {% set colors = {'Mechanical': '#FFCDD2', 'Programming': '#FFF9C4', 'Electrical': '#FFE0B2', 'Public Relations': '#E1BEE7'} %}
+                            {% for team in card.type %}
+                                <a style="background-color: {{colors[team]}}">{{team}}</a>
+                            {% endfor %}
+                        </div>
+                        <div class="users">
+                            {% for user in card.assign %}
+                                <a>{{user}}</a>
+                            {% endfor %}
+                        </div>
+
+                        <h1>Goal</h1>
+                        {% for block in card.goal %}
+                            {{block_to_html(block)|safe}}
+                        {% endfor %}
+
+                        <h1 style="margin-bottom: 0">Entries</h1>
+                        {% for entry in card.entries %}
+                            <hr>
+                            <h2>{{entry.timeframe['values'][0].strftime('%m/%d/%Y')}}</h2>
+                            <div class="columns">
+                                {% for column in entry.columns %}
+                                    {{column}}
+                                    {% if column != entry.columns[-1] %}{{'→'}}{% endif %}
+                                {% endfor %}
+                            </div>
+                            {% for section in ['progress', 'takeaways', 'plans'] %}
+                                {% set blocks = entry[section] %}
+
+                                {% if blocks and blocks|length > 0 %}
+                                    <h3>{{section.title()}}</h3>
+                                    {% for block in blocks %}
+                                        {{block_to_html(block)|safe}}
+                                    {% endfor %}
+                                {% endif %}
+                            {% endfor %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+        <script>
+            document.querySelectorAll('pre code').forEach(block => hljs.highlightBlock(block))
+        </script>
+    </body>
+</html>

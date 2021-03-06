@@ -4,8 +4,10 @@ CREATE TABLE card (
     type BLOB,
     assign BLOB,
     goal BLOB,
+    important BOOLEAN,
     PRIMARY KEY(id)
 );
+
 CREATE TABLE entry (
     id INT NOT NULL AUTO_INCREMENT,
     sprint INT,
