@@ -268,6 +268,9 @@ class Entry(Base):
     def get_all():
         return session.query(Entry).all()
 
+    def get_by_title(title):
+        return session.query(Entry).filter(Entry.card.has(Card.title == title)).all()
+
     def group_by_date(entries):
         group = {}
 

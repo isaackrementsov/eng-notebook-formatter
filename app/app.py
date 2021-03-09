@@ -22,7 +22,7 @@ mimes = {
     'wmv': 'video/x-ms-wmv'
 }
 
-#cookie = 'notion_browser_id=998a835a-33c5-4989-a880-a82dbc94f35d; notion_locale=en-US%2Flegacy; ajs_anonymous_id=%22e17535c7-741a-4930-9005-92bb54c7082d%22; intercom-id-gpfdrxfd=8acb8695-82b2-4dcd-a74f-6c79726d8d27; token_v2=d19c7ce73e9c7d191d45c57532c9827ad98985d72f4a138988bd00e34f5a3d648ccaca7a3dce2a41e09849fe4e9be3b7c830f6e7990e50f2addbce04412a8176fc83d400c611c8e3d1d862da2dd5; notion_user_id=6956a63c-9587-4e5c-9557-71412c200a68; notion_users=%5B%226956a63c-9587-4e5c-9557-71412c200a68%22%5D; ajs_user_id=%226956a63c95874e5c955771412c200a68%22; ajs_group_id=%22e7e8ab80cf1b43d4a7650d4c76c13082%22; __cfduid=d5edf93f90aeda60eb714b83471f0cbde1612561730; __stripe_mid=127d5e6a-9c02-4164-b75d-cb35b04c61a5a10687; intercom-session-gpfdrxfd=cEJaYURiQ3ZmWkhUUWQ0TWlhdjJHZzFjSnJrNmxHMC9QSXZvbDFzd1ZVYzhCSlNlbXBBallEaDlCTVc3Q1BTUC0tanJXK3UxNkFZZUFyeVVoaW0zem11Zz09--737ff397b639980cbfc673aebd4e49f1665f1487; logglytrackingsession=f458c0dc-785e-4a2d-9f90-c645b6992890'
+cookie = 'notion_browser_id=998a835a-33c5-4989-a880-a82dbc94f35d; notion_locale=en-US%2Flegacy; ajs_anonymous_id=%22e17535c7-741a-4930-9005-92bb54c7082d%22; intercom-id-gpfdrxfd=8acb8695-82b2-4dcd-a74f-6c79726d8d27; token_v2=d19c7ce73e9c7d191d45c57532c9827ad98985d72f4a138988bd00e34f5a3d648ccaca7a3dce2a41e09849fe4e9be3b7c830f6e7990e50f2addbce04412a8176fc83d400c611c8e3d1d862da2dd5; notion_user_id=6956a63c-9587-4e5c-9557-71412c200a68; notion_users=%5B%226956a63c-9587-4e5c-9557-71412c200a68%22%5D; ajs_user_id=%226956a63c95874e5c955771412c200a68%22; ajs_group_id=%22e7e8ab80cf1b43d4a7650d4c76c13082%22; __cfduid=d5edf93f90aeda60eb714b83471f0cbde1612561730; __stripe_mid=127d5e6a-9c02-4164-b75d-cb35b04c61a5a10687; intercom-session-gpfdrxfd=cEJaYURiQ3ZmWkhUUWQ0TWlhdjJHZzFjSnJrNmxHMC9QSXZvbDFzd1ZVYzhCSlNlbXBBallEaDlCTVc3Q1BTUC0tanJXK3UxNkFZZUFyeVVoaW0zem11Zz09--737ff397b639980cbfc673aebd4e49f1665f1487; logglytrackingsession=f458c0dc-785e-4a2d-9f90-c645b6992890'
 
 credentials = json.load(open('credentials.json', 'r'))
 Client(token_v2=credentials['token_v2'])
@@ -43,51 +43,35 @@ def rank_date(date):
 def make_auto(dimension):
     return 'auto' if dimension is None else dimension
 
-def extract_equations(fragments):
-    equations = []
+def fix_underscores(original):
+    starts_with_delim = original[:2] == '$$'
+    is_equation = False
 
-    for fragment in fragments:
-        if len(fragment) > 1:
-            formatting = fragment[1]
-            eq = [option for option in formatting if option[0] == 'e']
+    parts = original.split('$$')
+    fixed_parts = []
 
-            if len(eq) > 0:
-                latex = eq[0][1]
-                equations.append(latex)
+    for part in parts:
+        new_part = part
 
-    return equations
+        if not is_equation:
+            new_part = part.replace('_', '^!_')
 
-def mathy_title(block, original):
-    slices = original.split('⁍')
+        fixed_parts.append(new_part)
+        is_equation = not is_equation
 
-    if len(slices) > 1:
-        fragments = block.get()['properties']['title']
-        equations = extract_equations(fragments)
-
-        title = ''
-        inline = original.replace(' ', '') == '⁍'
-        for i in range(len(slices)):
-            title += slices[i]
-
-            if i < len(slices) - 1:
-                if inline:
-                    title += '$$ {equation} $$'.format(equation=equations[i])
-                else:
-                    title += '\( {equation} \)'.format(equation=equations[i])
-
-        return title
-    else:
-        return original
+    return '$$'.join(fixed_parts)
 
 def handle_formatting(block):
     text = block.title
 
-    formatted = text.replace('<', '&lt;').replace('>', '&gt;')
+    # Replace illegal characters
+    formatted = text.replace('<', '&lt;').replace('>', '&gt;').replace('*', '')
+    formatted = fix_underscores(formatted)
     formatted = re.sub(r'\`([^\`]*)\`', r'<code class="inline-snippet">\1</code>', formatted)
     formatted = re.sub(r'\[([^\[\]]*)\]\((.*?)\)', r'<a href="\2">\1</a>', formatted)
     formatted = re.sub(r'\_\_(.*?[^\_\s])\_\_', r'<b>\1</b>', formatted)
-    formatted = re.sub(r'\_(.*?[^\_\s])\_', r'<i>\1</i>', formatted)
-    formatted = mathy_title(block, formatted)
+    formatted = re.sub(r'\^!\_(.*?[^\_\s])\^!\_', r'<i>\1</i>', formatted)
+    formatted = re.sub(r'\$\$(.*?[^\_\s])\$\$', r'\\( \1 \\)', formatted)
 
     return formatted
 
