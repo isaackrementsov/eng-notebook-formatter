@@ -1,4 +1,5 @@
 import datetime
+import time
 import json
 import re
 import urllib
@@ -111,113 +112,123 @@ def download_image(url, path):
     del res
 
 def block_to_html(block):
-    type = block.type
+    try:
+        type = block.type
 
-    if type == 'bookmark':
-        cover = ''
+        if type == 'bookmark':
+            cover = ''
 
-        if block.bookmark_cover:
-            cover = '/static/img/bookmark/bg_{id}.jpg'.format(id=block._id)
-            download_image(block.bookmark_cover, cover)
+            if block.bookmark_cover:
+                cover = '/static/img/bookmark/bg_{id}.jpg'.format(id=block._id)
+                download_image(block.bookmark_cover, cover)
 
-        return """<div style="display: flex">
-            <a class="web-bookmark" href="{link}" style="background-image: url({cover})">
-                <p>
-                    <span class="bookmark-title">{title}</span>
-                    <span class="bookmark-description">{description}</span>
-                </p>
-            </a>
-        </div>""".format(
-            link=block.link,
-            cover=cover,
-            title=block.title,
-            description=shorten(block.description, 65)
-        )
-    elif type.split('_')[-1] == 'list' and type != 'column_list':
-        return '<li class="list-elem">{title}</li>'.format(title=handle_formatting(block))
-    elif type == 'code':
-        return '<pre><code class="java">{title}</code></pre>'.format(title=block.title)
-    elif type == 'image':
-        return '<img src="{source}" height="{height}" width="{width}"/>'.format(
-            source=block.source,
-            height=make_auto(block.height),
-            width=make_auto(block.width)
-        )
-    elif type == 'column_list':
-        column_list = '<div class="column-list">'
-
-        for child in block.children:
-            column = '<div class="column">'
-
-            for grandchild in child.children:
-                column += block_to_html(grandchild)
-
-            column_list += column + '</div>'
-
-        return column_list + '</div>'
-    elif type == 'video':
-        ext = block.source.split('?')[0].split('.')[-1]
-        mime = mimes.get(ext)
-
-        if mime is None:
-            return '<iframe height="300" width="500" src="{source}"></iframe>'.format(source=block.source.replace('watch?v=', 'embed/'))
-        else:
-            '''
-            return """<video height="{height}" width="{width}" controls>
-                <source src="{source}" type="{mime}"/>
-            </video>""".format(
-                height=block.height,
-                width=block.width,
-                source=block.source,
-                mime=mimes.get(ext)
+            return """<div style="display: flex">
+                <a class="web-bookmark" href="{link}" style="background-image: url({cover})">
+                    <p>
+                        <span class="bookmark-title">{title}</span>
+                        <span class="bookmark-description">{description}</span>
+                    </p>
+                </a>
+            </div>""".format(
+                link=block.link,
+                cover=cover,
+                title=block.title,
+                description=shorten(block.description, 65)
             )
-            '''
-            return ''
-    elif type == 'drive':
-        record = block.get()
-        thumbnail = ''
-        title = ''
-        icon = ''
-        user = ''
-        timestamp = ''
-        props = record['format'].get('drive_properties')
+        elif type.split('_')[-1] == 'list' and type != 'column_list':
+            return '<li class="list-elem">{title}</li>'.format(title=handle_formatting(block))
+        elif type == 'code':
+            return '<pre><code class="java">{title}</code></pre>'.format(title=block.title)
+        elif type == 'image':
+            return '<img src="{source}" height="{height}" width="{width}"/>'.format(
+                source=block.source,
+                height=make_auto(block.height),
+                width=make_auto(block.width)
+            )
+        elif type == 'column_list':
+            column_list = '<div class="column-list">'
 
-        if props is not None:
-            if props.get('thumbnail'):
-                url = get_image_url(props['thumbnail'], block)
-                thumbnail = '/static/img/drive/bg_{id}.jpg'.format(id=block._id)
-                download_image(url, thumbnail)
+            for child in block.children:
+                column = '<div class="column">'
 
-            if props.get('modified_time'):
-                timestamp = timeago.format(
-                    datetime.datetime.fromtimestamp(int(props['modified_time']) / 1e3),
-                    datetime.datetime.now()
+                for grandchild in child.children:
+                    column += block_to_html(grandchild)
+
+                column_list += column + '</div>'
+
+            return column_list + '</div>'
+        elif type == 'video':
+            ext = block.source.split('?')[0].split('.')[-1]
+            mime = mimes.get(ext)
+
+            if mime is None:
+                return '<iframe height="300" width="500" src="{source}"></iframe>'.format(source=block.source.replace('watch?v=', 'embed/'))
+            else:
+                '''
+                return """<video height="{height}" width="{width}" controls>
+                    <source src="{source}" type="{mime}"/>
+                </video>""".format(
+                    height=block.height,
+                    width=block.width,
+                    source=block.source,
+                    mime=mimes.get(ext)
                 )
+                '''
+                return ''
+        elif type == 'drive':
+            record = block.get()
+            thumbnail = ''
+            title = ''
+            icon = ''
+            user = ''
+            timestamp = ''
+            source = ''
+            props = record['format'].get('drive_properties')
 
-            icon = props.get('icon')
-            title = props.get('title')
-            user = props.get('user_name')
+            if props is not None:
+                if props.get('thumbnail'):
+                    url = get_image_url(props['thumbnail'], block)
+                    thumbnail = '/static/img/drive/bg_{id}.jpg'.format(id=block._id)
+                    download_image(url, thumbnail)
 
-        return """<div style="display: flex">
-            <a class="web-bookmark drive-preview" href="{source}" style="background-image: url({thumbnail})">
-                <p>
-                    <span class="bookmark-title"><img src="{icon}"/>{title}</span>
-                    <span class="bookmark-edited">Last edited by {user} {timestamp}</span>
-                </p>
-            </a>
-        </div>""".format(
-            source=block.source,
-            thumbnail=thumbnail,
-            icon=icon,
-            title=title,
-            user=user,
-            timestamp=timestamp
-        )
-    elif hasattr(block, 'title'):
-        if block.title.replace(' ', '') != '':
-            return '<p>{title}</p>'.format(title=handle_formatting(block))
+                if props.get('modified_time'):
+                    timestamp = timeago.format(
+                        datetime.datetime.fromtimestamp(int(props['modified_time']) / 1e3),
+                        datetime.datetime.now()
+                    )
 
-    return ''
+                source = props.get('url')
+                icon = props.get('icon')
+                title = props.get('title')
+                user = props.get('user_name')
+
+            return """<div style="display: flex">
+                <a class="web-bookmark drive-preview" href="{source}" style="background-image: url({thumbnail})">
+                    <p>
+                        <span class="bookmark-title"><img src="{icon}"/>{title}</span>
+                        <span class="bookmark-edited">Last edited by {user} {timestamp}</span>
+                    </p>
+                </a>
+            </div>""".format(
+                source=source,
+                thumbnail=thumbnail,
+                icon=icon,
+                title=title,
+                user=user,
+                timestamp=timestamp
+            )
+        elif hasattr(block, 'title'):
+            if block.title.replace(' ', '') != '':
+                return '<p>{title}</p>'.format(title=handle_formatting(block))
+
+        return ''
+    except Exception as e:
+        print(e)
+        print('Too many requests; waiting 10 seconds')
+        time.sleep(10)
+        print('Continuing...')
+
+        return block_to_html(block)
 
 def shorten(text, max_len):
     shortened = text[0:max_len]
@@ -240,7 +251,6 @@ def generate_page():
     return render_template(
         'main_notebook.html',
         entry_map=entry_map,
-        important_cards=important_cards,
         dates=dates,
         sprint_goals=sprint_goals,
         block_to_html=block_to_html,

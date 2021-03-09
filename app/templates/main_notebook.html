@@ -15,23 +15,47 @@
                 }
             }
         </script>
-        <script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+        <!--<script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>-->
         <script src="/static/js/lib/highlight.min.js"></script>
+        <link rel="icon" href="/static/img/favicon.ico"/>
     </head>
     <body>
-
+        <div class="jumbotron text-center cover">
+            <img src="/static/img/robohawks.png" class="logo"/>
+            <h1>Engineering Notebook</h1>
+            <h2>RoboHawks | FTC #5741</h2>
+            <p>Creating opportunities for real world engineering and hands-on learning in a safe environment for all students at CVU</p>
+        </div>
+        <hr>
+        <div class="row contents">
+            <div class="central-col col-md-12">
+                <div>
+                    <h1>Table of Contents</h1>
+                    <ul>
+                        {% for sprint in range(1,5) %}
+                            <li><b><a href="#sprint{{sprint}}">Sprint {{sprint}}</a></b></li>
+                            <ul>
+                                <li><a href="#goals-sprint{{sprint}}">New Goals</a></li>
+                                <li><a href="#entries-sprint{{sprint}}">Notebook Entries</a></li>
+                            </ul>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <hr/>
         {% for sprint in range(1,5) %}
             {% if sprint != 1 %}
                 <span class="sprint-header"></span>
             {% endif %}
 
             <div class="jumbotron text-center first">
-                <h1>Sprint {{sprint}}</h1>
+                <h1 id="sprint{{sprint}}">Sprint {{sprint}}</h1>
             </div>
             <div class="row">
                 <div class="central-col col-md-12">
                     <div class="card new-goals">
-                        <h1>New Goals</h1>
+                        <h1 id="goals-sprint{{sprint}}">New Goals</h1>
                         {% for card in sprint_goals[sprint - 1] %}
                             <hr>
                             <h2>{{card.title}}</h2>
@@ -55,7 +79,7 @@
             </div>
             <span class="notebook-entries"></span>
             <div class="jumbotron text-center">
-                <h2>Notebook Entries</h2>
+                <h2 id="entries-sprint{{sprint}}">Notebook Entries</h2>
             </div>
             <div class="row">
                 <div class="central-col col-md-12">
@@ -64,7 +88,7 @@
 
                         {% if entries[0].sprint == sprint %}
                             <div class="card">
-                                <h1>{{date.replace('_', '/')}}</h1>
+                                <h1 id="entries-starting{{date}}">{{date.replace('_', '/')}}</h1>
 
                                 {% for entry in entries %}
                                     <hr>
@@ -96,6 +120,7 @@
                     {% endfor %}
                 </div>
             </div>
+            <hr/>
         {% endfor %}
         <script>
             document.querySelectorAll('pre code').forEach(block => hljs.highlightBlock(block))

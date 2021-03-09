@@ -203,3 +203,60 @@ a.drive-preview p .bookmark-title {
     max-width: 100% !important;
     width: 100% !important;
 }
+
+.cover * {
+    margin: 20px auto;
+}
+
+.cover .logo {
+    width: 450px;
+}
+
+.cover h1 {
+    font-size: 60px;
+}
+
+.cover h2 {
+    font-size: 40px;
+}
+
+.cover p {
+    font-size: 20px;
+    width: 600px;
+    font-weight: 300;
+}
+
+.contents {
+    color: white;
+}
+
+.contents .central-col > div {
+    margin: auto;
+    width: 500px;
+}
+
+.contents ul {
+    text-align: left;
+    list-style-type: none;
+}
+
+.contents .central-col > div > ul {
+    padding: 0;
+    font-size: 25px;
+}
+
+.contents li {
+    padding: 3px 0;
+}
+
+.contents .central-col > div > ul > ul {
+    font-size: 20px;
+}
+
+.contents ul li a {
+    color: white;
+}
+
+.contents h1 {
+    margin: 20px auto;
+}
